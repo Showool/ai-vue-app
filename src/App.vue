@@ -1,41 +1,21 @@
-
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ElConfigProvider, ElIcon } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import LoginView from './views/LoginView.vue'
+import WorkspaceLayout from './components/WorkspaceLayout.vue'
+import { useAuthStore } from './stores/auth'
 
-const count = ref(0)
+const auth = useAuthStore()
 </script>
 
 <template>
-  <main class="container">
-    <h1>My First Vue 3 App</h1>
-    <p>我的第一个 Vue 3 + Vercel 网站</p>
-
-    <button @click="count++">
-      点击次数：{{ count }}
-    </button>
-  </main>
+  <el-config-provider :locale="zhCn">
+    <WorkspaceLayout v-if="auth.isAuthenticated" />
+    <LoginView v-else-if="auth.ready" />
+    <div v-else class="session-loading" role="status">
+      <el-icon class="is-loading" :size="24"><Loading /></el-icon
+      ><span class="sr-only">正在恢复登录状态</span>
+    </div>
+  </el-config-provider>
 </template>
-
-<style scoped>
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-}
-
-h1 {
-  color: #42b883;
-}
-
-button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  background: #42b883;
-  color: white;
-  cursor: pointer;
-}
-</style>
