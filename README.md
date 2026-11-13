@@ -36,6 +36,8 @@ Vercel 部署步骤：
 3. 使用 Vite 框架，构建命令 `npm run build`，输出目录 `dist`。根目录 `api/auth.ts`、`api/chat.ts` 是最小 Node.js Function 入口，实际逻辑在 `src/server/`。私密配置由 Vercel 运行时环境注入。
 4. 新增或修改环境变量后重新部署。若凭据曾公开，应更换凭据；只修改文档无法撤回已经公开的信息。
 
+根 `tsconfig.json` 中的 `rewriteRelativeImportExtensions` 用于把函数及其依赖的 `.ts` 导入重写为编译后的 `.js` 路径，避免部署后出现 `ERR_MODULE_NOT_FOUND`。根配置同时指定 Node 类型和 ES2023 编译目标。[Vercel Node.js 运行时](https://vercel.com/docs/functions/runtimes/node-js#using-typescript-with-the-nodejs-runtime)不支持 TypeScript Project References，因此这些选项保留在根文件中。
+
 ## Agent 与工具扩展
 
 接入参考 [LangChain JavaScript Quickstart](https://docs.langchain.com/oss/javascript/langchain/quickstart) 和 [ChatOpenAI 集成](https://docs.langchain.com/oss/javascript/integrations/chat/openai)，使用 `createAgent`、`ChatOpenAI` 和 `tool`。模型与工具只在服务端运行，浏览器请求 `/api/chat` 获取最终回答。请求失败可重试，重试不会重复添加用户消息。
@@ -81,4 +83,4 @@ npm test
 npm run build
 ```
 
-测试覆盖历史恢复与保留上限、损坏数据、代理输入校验、LangChain 工具循环，以及服务端模块和密钥进入浏览器构建时的拦截。测试通过本地模拟 OpenAI 响应验证，不需要真实 Key，也不会产生模型费用。构建同时执行前端、代理和服务端的 TypeScript 类型检查。
+测试覆盖历史恢复与保留上限、损坏数据、代理输入校验、LangChain 工具循环，以及服务端模块和密钥进入浏览器构建时的拦截。部署回归测试将函数及依赖编译为纯 JavaScript，并在关闭 TypeScript 支持的 Node 进程中验证登录及聊天接口鉴权，避免只在本地源码运行时通过。测试通过本地模拟 OpenAI 响应验证，不需要真实 Key，也不会产生模型费用。构建同时执行前端、代理和服务端的 TypeScript 类型检查。

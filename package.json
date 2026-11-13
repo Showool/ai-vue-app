@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test src/__tests__/history.test.ts src/__tests__/api.test.ts src/__tests__/boundary.test.ts",
+    "test": "node --test src/__tests__/history.test.ts src/__tests__/api.test.ts src/__tests__/boundary.test.ts src/__tests__/deployment.test.ts",
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
